@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Comparative Study of Machine Learning Algorithms for Security Breach Detection</title>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              950: '#070b14',
+              900: '#0f172a',
+              800: '#1e293b',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Custom scrollbar & subtle utility refinements */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.55);
+    }
+    .hero-grid {
+      background-image:
+        radial-gradient(circle at 20% 25%, rgba(99, 102, 241, 0.18), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.16), transparent 45%),
+        linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+    }
+    .glass-nav {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
+
+  <!-- ==================== STICKY TOP NAVIGATION ==================== -->
+  <header class="sticky top-0 z-50 bg-slate-900/95 dark:bg-slate-950/95 text-white border-b border-slate-800 glass-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Brand / Logo -->
+        <a href="#overview" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-cyan-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+          </div>
+          <div class="leading-tight">
+            <span class="block text-sm font-bold tracking-tight text-white group-hover:text-cyan-300 transition-colors">IDS-ML Benchmark</span>
+            <span class="block text-[11px] font-mono text-slate-400">IIMS Chinchwad • SPPU</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1 text-sm font-medium text-slate-300">
+          <a href="#overview" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Overview</a>
+          <a href="#framework" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Framework & Lifecycle</a>
+          <a href="#models" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Models & Data Graphs</a>
+          <a href="#methodology" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Methodology & Metrics</a>
+          <a href="#validity" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Validity & Ablation</a>
+          <a href="#discussion" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Discussion & References</a>
+          <a href="#viva-preparation" class="px-3 py-2 rounded-lg hover:text-white hover:bg-slate-800/80 transition-colors">Viva Preparation</a>
+        </nav>
+
+        <!-- Actions: Theme Toggle & Mobile Menu Button -->
+        <div class="flex items-center gap-2">
+          <button id="themeToggle" type="button" aria-label="Toggle Dark or Light Mode"
+            class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors flex items-center gap-1.5 text-xs font-medium">
+            <svg id="sunIcon" class="w-4 h-4 hidden text-amber-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+            <svg id="moonIcon" class="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+            <span class="hidden sm:inline" id="themeLabel">Dark</span>
+          </button>
+
+          <button id="mobileMenuBtn" type="button" aria-label="Open Navigation Menu"
+            class="lg:hidden p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div id="mobileMenu" class="hidden lg:hidden pb-4 pt-2 border-t border-slate-800 space-y-1">
+        <a href="#overview" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Overview & Abstract</a>
+        <a href="#framework" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Framework & Lifecycle</a>
+        <a href="#models" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Models & Data Graphs</a>
+        <a href="#methodology" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Methodology & Metrics</a>
+        <a href="#validity" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Validity & Ablation</a>
+        <a href="#discussion" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Discussion & References</a>
+        <a href="#viva-preparation" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800">Viva Preparation</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 1. HERO & ABSTRACT ==================== -->
+  <section id="overview" class="bg-slate-900 dark:bg-slate-950 text-white hero-grid border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+      <div class="max-w-4xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-xs font-mono mb-6">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Academic Research Portal • Network Intrusion Detection Study
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
+          A Comparative Study of Machine Learning Algorithms for Security Breach Detection
+        </h1>
+
+        <!-- Authors & Affiliation -->
+        <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-slate-300">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-3 py-1 rounded-lg bg-slate-800/90 border border-slate-700 font-medium text-white">Sagar Shahadev Kashid</span>
+            <span class="px-3 py-1 rounded-lg bg-slate-800/90 border border-slate-700 font-medium text-white">Sanchit Sunil Tikhile</span>
+            <span class="px-3 py-1 rounded-lg bg-slate-800/90 border border-slate-700 font-medium text-white">Sohel Javed Shaikh</span>
+          </div>
+        </div>
+        <p class="mt-3 text-sm text-cyan-300/90 font-medium">
+          International Institute of Management Science (IIMS) Chinchwad • Savitribai Phule Pune University
+        </p>
+
+        <!-- Keyword Badges -->
+        <div class="mt-6 flex flex-wrap gap-2">
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Machine Learning</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Cybersecurity</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Security Breach Detection</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Decision Tree</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Random Forest</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Support Vector Machine</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Classification</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Intrusion Detection</span>
+          <span class="px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700/80 text-xs font-mono text-slate-300">Data Security</span>
+        </div>
+      </div>
+
+      <!-- Abstract Card & Quick Stats -->
+      <div class="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        <div class="lg:col-span-8 bg-slate-800/60 border border-slate-700/80 rounded-2xl p-6 sm:p-7 backdrop-blur-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-mono uppercase tracking-wider text-cyan-400 font-semibold">Abstract</h2>
+            <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-400/30">Protocol & Benchmark Study</span>
+          </div>
+          <p class="text-sm sm:text-base leading-relaxed text-slate-200">
+            The increasing number of cyberattacks has created a significant need for reliable network intrusion detection systems (IDS). Traditional security mechanisms often face challenges in identifying complex and previously unseen malicious activities. Machine Learning (ML) techniques provide an effective approach to analysing network traffic and identifying suspicious patterns. This research presents a controlled comparative evaluation of six traditional ML algorithms—<strong>Decision Tree, Random Forest, Support Vector Machine (SVM), K-Nearest Neighbours (KNN), Naive Bayes, and Logistic Regression</strong>—using the <strong>UNSW-NB15</strong> benchmark dataset (257,673 records representing normal and malicious network activities). Following preprocessing, feature selection, and stratified training/testing procedures, algorithms are evaluated across accuracy, precision, recall, macro-averaged F1-score, ROC-AUC, false positive rate, and computational time to provide an evidence-based assessment of their suitability and limitations for network intrusion detection.
+          </p>
+        </div>
+
+        <!-- 4 Quick Stat Cards -->
+        <div class="lg:col-span-4 grid grid-cols-2 gap-4">
+          <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between">
+            <span class="text-xs font-mono uppercase text-slate-400">ML Models</span>
+            <div class="mt-2 text-3xl font-extrabold text-indigo-400 font-mono">6</div>
+            <span class="mt-1 text-xs text-slate-300">DT, RF, SVM, KNN, NB, LR</span>
+          </div>
+          <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between">
+            <span class="text-xs font-mono uppercase text-slate-400">UNSW-NB15</span>
+            <div class="mt-2 text-2xl sm:text-3xl font-extrabold text-cyan-400 font-mono">257,673</div>
+            <span class="mt-1 text-xs text-slate-300">Verified Benchmark Records</span>
+          </div>
+          <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between">
+            <span class="text-xs font-mono uppercase text-slate-400">Attack Types</span>
+            <div class="mt-2 text-3xl font-extrabold text-emerald-400 font-mono">9</div>
+            <span class="mt-1 text-xs text-slate-300">Categories + Normal Traffic</span>
+          </div>
+          <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-5 flex flex-col justify-between">
+            <span class="text-xs font-mono uppercase text-slate-400">Evaluation</span>
+            <div class="mt-2 text-3xl font-extrabold text-amber-400 font-mono">11</div>
+            <span class="mt-1 text-xs text-slate-300">Operational Metrics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+    <!-- ==================== 2. INTRODUCTION, RELATED WORK & RESEARCH GAPS ==================== -->
+    <section id="introduction" class="space-y-10">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-indigo-600 dark:text-indigo-400 font-semibold">Sections I, II & III</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Introduction, Related Work & Research Gaps</h2>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+          Establishing a reproducible, controlled comparison beyond overall accuracy alone.
+        </p>
+      </div>
+
+      <!-- Introduction Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+          <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+            I. Introduction & Motivation
+          </h3>
+          <div class="space-y-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p>
+              Growing dependence on internet services, online banking, cloud computing, and digital communication has sharply increased exposure to cyber threats and security breaches. Traditional signature-based detection and predefined firewall rules struggle to detect complex, novel, or previously unseen attack patterns.
+            </p>
+            <p>
+              While supervised Machine Learning algorithms offer strong capabilities for analysing network traffic, each algorithm exhibits distinct trade-offs in classification accuracy, minority-attack recall, false positive rates, and computational overhead. Unlike studies relying exclusively on overall accuracy, this study conducts a <strong>controlled comparative evaluation</strong> under a common benchmark dataset and evaluation protocol—accounting for <strong>macro-averaged F1-score, recall, precision, false positive rate, dataset imbalance, feature selection, and computational efficiency</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-indigo-600 to-slate-900 text-white rounded-2xl p-6 sm:p-7 shadow-sm flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-mono uppercase tracking-wider text-cyan-300">Core Contribution</span>
+            <h3 class="text-xl font-bold mt-2">Reproducible Comparative Protocol</h3>
+            <p class="mt-3 text-sm text-slate-200 leading-relaxed">
+              Rather than proposing a brand-new algorithm, the primary contribution is a rigorous, dataset-specific experimental benchmark comparing six foundational ML classifiers on identical partitions, preprocessing rules, and operational metrics.
+            </p>
+          </div>
+          <div class="mt-6 pt-4 border-t border-white/15 grid grid-cols-2 gap-3 text-xs font-mono">
+            <div class="bg-white/10 rounded-xl p-3">
+              <div class="text-cyan-300 font-semibold">Benchmark</div>
+              <div class="mt-0.5 text-white">UNSW-NB15</div>
+            </div>
+            <div class="bg-white/10 rounded-xl p-3">
+              <div class="text-emerald-300 font-semibold">Validation</div>
+              <div class="mt-0.5 text-white">5-Fold Stratified</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Work Table (Section II) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold">II. Background & Related Work Comparison</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
+            Prior benchmark literature explored NSL-KDD, UNSW-NB15, and CICIDS2017, yet differing preprocessing and metric protocols prevent direct cross-study comparison.
+          </p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-3.5 px-5 font-semibold">Prior Evidence</th>
+                <th class="py-3.5 px-5 font-semibold">Primary Evaluation Focus</th>
+                <th class="py-3.5 px-5 font-semibold">Major Contribution</th>
+                <th class="py-3.5 px-5 font-semibold">Remaining Limitation for This Study</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="py-4 px-5 font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">Ali et al. (2024)</td>
+                <td class="py-4 px-5">ML and DL techniques for intrusion detection</td>
+                <td class="py-4 px-5">Reviews algorithms, datasets, and performance measures comprehensively</td>
+                <td class="py-4 px-5 text-slate-600 dark:text-slate-400">Survey rather than a controlled experiment</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="py-4 px-5 font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">Rehman et al. (2025)</td>
+                <td class="py-4 px-5">ML-based intrusion detection</td>
+                <td class="py-4 px-5">Examines datasets, models, class imbalance, and research challenges</td>
+                <td class="py-4 px-5 text-slate-600 dark:text-slate-400">Primarily a systematic literature review</td>
+              </tr>
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                <td class="py-4 px-5 font-semibold text-indigo-600 dark:text-indigo-400 whitespace-nowrap">Putra & Amarudin (2025)</td>
+                <td class="py-4 px-5">Decision Tree, Random Forest, SVM, and Boosting on NSL-KDD</td>
+                <td class="py-4 px-5">Compares detection performance and computational time</td>
+                <td class="py-4 px-5 text-slate-600 dark:text-slate-400">Evaluates a different algorithm set using one benchmark dataset (NSL-KDD)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Research Gap Cards (Section III) -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">III. Research Gaps & Problem Statement</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-mono font-bold mb-4">G1</div>
+            <h4 class="font-bold text-base mb-2">Fragmented Algorithm Subsets</h4>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Many comparative studies evaluate inconsistent subsets of classifiers across varying datasets and preprocessing pipelines, limiting fair, direct side-by-side comparisons.
+            </p>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 flex items-center justify-center font-mono font-bold mb-4">G2</div>
+            <h4 class="font-bold text-base mb-2">Overemphasis on Overall Accuracy</h4>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Prior evaluations frequently emphasize overall accuracy without sufficient focus on minority-class recall, macro-averaged F1-score, and False Positive Rates (FPR) under class imbalance.
+            </p>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-mono font-bold mb-4">G3</div>
+            <h4 class="font-bold text-base mb-2">Decoupled Efficiency Assessment</h4>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Classification performance and computational efficiency (training time, prediction latency, CPU/memory footprint) are rarely evaluated jointly under a single experimental protocol.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3. PROPOSED 8-LAYER FRAMEWORK & LIFECYCLE ==================== -->
+    <section id="framework" class="space-y-10 scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold">Sections IV, V & VI</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Proposed 8-Layer Framework & Lifecycle Traceability</h2>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+          Modular architecture designed for reproducible intrusion detection experiments and classification error analysis.
+        </p>
+      </div>
+
+      <!-- 8-Layer Framework Interactive Grid -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">IV. Proposed 8-Layer ML Framework for Network Intrusion Detection</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="frameworkGrid">
+          <!-- Populated cleanly via JS -->
+        </div>
+      </div>
+
+      <!-- Lifecycle Traceability Model Flowchart (Section V) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <div>
+            <h3 class="text-lg font-bold">V. Lifecycle Traceability Model</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">End-to-end experimental flow preventing data leakage between training and independent testing partitions.</p>
+          </div>
+          <span class="text-xs font-mono px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 self-start">Zero-Leakage Pipeline</span>
+        </div>
+
+        <!-- Visual Flowchart Matching Paper Diagram -->
+        <div class="max-w-3xl mx-auto flex flex-col items-center space-y-3">
+          <!-- Step 1 -->
+          <div class="w-full py-3.5 px-5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 text-center font-semibold text-slate-800 dark:text-emerald-100 shadow-sm">
+            Cybersecurity Dataset <span class="text-xs font-mono text-emerald-700 dark:text-emerald-400 ml-1">(UNSW-NB15)</span>
+          </div>
+          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+
+          <!-- Step 2 -->
+          <div class="w-full py-3.5 px-5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 text-center font-semibold text-slate-800 dark:text-emerald-100 shadow-sm">
+            Data Cleaning and Preprocessing
+          </div>
+          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+
+          <!-- Step 3 -->
+          <div class="w-full py-3.5 px-5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 text-center font-semibold text-slate-800 dark:text-emerald-100 shadow-sm">
+            Feature Selection and Transformation
+          </div>
+          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+
+          <!-- Parallel Split: Training & Testing -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="flex flex-col items-center space-y-2.5 p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/60">
+              <div class="w-full py-3 px-4 rounded-xl bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-700 text-center font-semibold text-sm">
+                Training Data <span class="block text-xs font-mono text-indigo-600 dark:text-indigo-400 mt-0.5">80% Stratified / 5-Fold CV</span>
+              </div>
+              <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+              <div class="w-full py-3 px-4 rounded-xl bg-indigo-600 text-white text-center font-semibold text-sm shadow">
+                Six ML Algorithms
+                <span class="block text-[11px] font-mono text-indigo-100 mt-0.5">DT • RF • SVM • KNN • NB • LR</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-center space-y-2.5 p-4 rounded-2xl bg-cyan-50/70 dark:bg-cyan-950/30 border border-cyan-200/80 dark:border-cyan-800/60">
+              <div class="w-full py-3 px-4 rounded-xl bg-white dark:bg-slate-900 border border-cyan-200 dark:border-cyan-700 text-center font-semibold text-sm">
+                Testing Data <span class="block text-xs font-mono text-cyan-600 dark:text-cyan-400 mt-0.5">20% Holdout Partition</span>
+              </div>
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+              <div class="w-full py-3 px-4 rounded-xl bg-cyan-600 text-white text-center font-semibold text-sm shadow">
+                Independent Evaluation
+                <span class="block text-[11px] font-mono text-cyan-100 mt-0.5">Unseen Traffic Classification</span>
+              </div>
+            </div>
+          </div>
+
+          <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" /></svg>
+
+          <!-- Final Step -->
+          <div class="w-full py-4 px-5 rounded-xl bg-gradient-to-r from-indigo-600 via-cyan-600 to-emerald-600 text-white text-center font-bold shadow-md">
+            Comparative Performance Results
+            <span class="block text-xs font-normal text-white/90 mt-0.5">Metrics, Confusion Matrices, Error Analysis & Statistical Significance Tests</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Classification Error Analysis (Section VI) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+        <h3 class="text-lg font-bold mb-2">VI. Classification Error Analysis Model</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">
+          Evaluates confusion matrices derived from actual model predictions and verified labels. No unverified assumptions about defect propagation between chronological network events are made.
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/70">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-mono font-bold text-emerald-700 dark:text-emerald-400">TP (True Positive)</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-emerald-200/70 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200">Correct</span>
+            </div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              Malicious network activity is accurately detected and flagged as an attack.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-800/70">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-mono font-bold text-cyan-700 dark:text-cyan-400">TN (True Negative)</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-cyan-200/70 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200">Correct</span>
+            </div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              Normal, legitimate network traffic is correctly identified and allowed without disruption.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/70">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-mono font-bold text-amber-700 dark:text-amber-400">FP (False Positive)</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-amber-200/70 dark:bg-amber-900 text-amber-800 dark:text-amber-200">Alert Fatigue</span>
+            </div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              Normal activity is misclassified as malicious, generating unnecessary security alerts and analyst fatigue.
+            </p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/70">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-mono font-bold text-rose-700 dark:text-rose-400">FN (False Negative)</span>
+              <span class="text-xs px-2 py-0.5 rounded bg-rose-200/70 dark:bg-rose-900 text-rose-800 dark:text-rose-200">Critical Risk</span>
+            </div>
+            <p class="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+              Actual malicious activity is misclassified as normal, allowing security breaches to bypass detection undetected.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. SIX ML MODELS DEEP-DIVE & DATA VISUALIZATIONS ==================== -->
+    <section id="models" class="space-y-8 scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold">Sections VIII.A, IX & XIII</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Six ML Models Deep-Dive & Interactive Data Graphs</h2>
+        </div>
+        <button id="openEditorBtn" type="button"
+          class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-colors self-start md:self-auto">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+          </svg>
+          Edit Experimental Data
+        </button>
+      </div>
+
+      <!-- Prominent Data-Integrity Status Banner (Section XIII) -->
+      <div id="integrityBanner" class="rounded-2xl border-2 border-amber-400/60 bg-amber-50 dark:bg-amber-950/30 p-5 sm:p-6">
+        <div class="flex flex-col sm:flex-row gap-4 items-start">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+          </div>
+          <div class="flex-1">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <h3 class="font-bold text-amber-900 dark:text-amber-200 text-base">Section XIII — Data-Integrity Status Notice</h3>
+              <span id="dataModeBadge" class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-amber-200 dark:bg-amber-800/80 text-amber-900 dark:text-amber-100 font-semibold">
+                Illustrative UNSW-NB15 Simulation Profiles
+              </span>
+            </div>
+            <p id="dataModeDesc" class="text-sm text-amber-900/90 dark:text-amber-100/85 leading-relaxed">
+              Per the manuscript's <strong>Data-Integrity Status</strong>, verified Scikit-learn execution logs have not yet been finalized in this version of the paper. Therefore, while the <strong>UNSW-NB15 dataset partition numbers (175,341 training, 82,332 testing, 257,673 total, 9 attack categories) are actual official figures</strong>, the model performance charts below display realistic <strong>Illustrative UNSW-NB15 Simulation Profiles</strong>. Use the <strong>"Edit Experimental Data"</strong> button above to enter your verified Scikit-learn results and update every chart, ranking, and confusion matrix live.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Model Selector (M1 - M6) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <!-- Tabs -->
+        <div class="border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/40 p-3">
+          <div class="flex flex-wrap gap-2" id="modelTabs" role="tablist">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Selected Model Deep-Dive Panel -->
+        <div class="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Explanation, Preprocessing, Strengths/Limitations -->
+          <div class="lg:col-span-6 space-y-5">
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-2">
+                <span id="mCode" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-mono text-xs font-bold">M1</span>
+                <span id="mScalingBadge" class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold"></span>
+                <span id="mDataTag" class="px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 text-xs font-mono">Illustrative Profile</span>
+              </div>
+              <h3 id="mName" class="text-2xl font-bold tracking-tight">Decision Tree</h3>
+              <p id="mMechanism" class="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+            </div>
+
+            <!-- Preprocessing & Scaling Box -->
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80">
+              <div class="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold mb-1">Preprocessing & Feature Scaling</div>
+              <p id="mPreprocessing" class="text-sm text-slate-700 dark:text-slate-200"></p>
+            </div>
+
+            <!-- Strengths & Limitations -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/25 border border-emerald-200/80 dark:border-emerald-800/60">
+                <h4 class="text-xs font-mono uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-bold mb-2">Strengths in IDS</h4>
+                <ul id="mStrengths" class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc pl-4"></ul>
+              </div>
+              <div class="p-4 rounded-xl bg-rose-50/70 dark:bg-rose-950/25 border border-rose-200/80 dark:border-rose-800/60">
+                <h4 class="text-xs font-mono uppercase tracking-wider text-rose-700 dark:text-rose-400 font-bold mb-2">Limitations in IDS</h4>
+                <ul id="mLimitations" class="space-y-1.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 list-disc pl-4"></ul>
+              </div>
+            </div>
+
+            <!-- Quick Metric Strip for Selected Model -->
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-2" id="mQuickMetrics">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- Right: Radar Chart + Derived Confusion Matrix -->
+          <div class="lg:col-span-6 space-y-6">
+            <!-- Individual Model Radar Chart -->
+            <div class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="text-sm font-bold">Model Performance Radar Profile</h4>
+                <span class="text-xs font-mono text-slate-500 dark:text-slate-400">Scale: 0% – 100%</span>
+              </div>
+              <div class="relative h-64 sm:h-72 w-full">
+                <canvas id="modelRadarChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Interactive Confusion Matrix -->
+            <div class="p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <h4 class="text-sm font-bold">Derived Confusion Matrix (UNSW-NB15 Test Set: 82,332)</h4>
+                <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400">45,332 Attack • 37,000 Normal</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                <div></div>
+                <div class="font-mono font-semibold text-slate-500 dark:text-slate-400 py-1">Predicted: Attack</div>
+                <div class="font-mono font-semibold text-slate-500 dark:text-slate-400 py-1">Predicted: Normal</div>
+
+                <div class="flex items-center justify-end pr-2 font-mono font-semibold text-slate-500 dark:text-slate-400">Actual: Attack</div>
+                <div class="p-3 rounded-xl bg-emerald-100/90 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-700">
+                  <div class="font-mono text-[11px] text-emerald-800 dark:text-emerald-300 font-semibold">TP (Detected)</div>
+                  <div id="cmTP" class="text-lg font-extrabold font-mono text-emerald-900 dark:text-emerald-100 mt-0.5">—</div>
+                </div>
+                <div class="p-3 rounded-xl bg-rose-100/90 dark:bg-rose-900/40 border border-rose-300 dark:border-rose-700">
+                  <div class="font-mono text-[11px] text-rose-800 dark:text-rose-300 font-semibold">FN (Missed)</div>
+                  <div id="cmFN" class="text-lg font-extrabold font-mono text-rose-900 dark:text-rose-100 mt-0.5">—</div>
+                </div>
+
+                <div class="flex items-center justify-end pr-2 font-mono font-semibold text-slate-500 dark:text-slate-400">Actual: Normal</div>
+                <div class="p-3 rounded-xl bg-amber-100/90 dark:bg-amber-900/40 border border-amber-300 dark:border-amber-700">
+                  <div class="font-mono text-[11px] text-amber-800 dark:text-amber-300 font-semibold">FP (False Alarm)</div>
+                  <div id="cmFP" class="text-lg font-extrabold font-mono text-amber-900 dark:text-amber-100 mt-0.5">—</div>
+                </div>
+                <div class="p-3 rounded-xl bg-cyan-100/90 dark:bg-cyan-900/40 border border-cyan-300 dark:border-cyan-700">
+                  <div class="font-mono text-[11px] text-cyan-800 dark:text-cyan-300 font-semibold">TN (Benign OK)</div>
+                  <div id="cmTN" class="text-lg font-extrabold font-mono text-cyan-900 dark:text-cyan-100 mt-0.5">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparative Charts Grid (4 Interactive Charts) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Chart 1: Overall Classification Performance -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <h3 class="font-bold text-base">1. Overall Classification Performance</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Accuracy, Precision, Recall, Macro F1-Score & ROC-AUC (%)</p>
+            </div>
+            <select id="metricFilter" aria-label="Filter Classification Metric"
+              class="text-xs font-mono rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <option value="all">All 5 Metrics</option>
+              <option value="accuracy">Accuracy Only</option>
+              <option value="precision">Precision Only</option>
+              <option value="recall">Recall Only</option>
+              <option value="f1">Macro F1-Score Only</option>
+              <option value="rocAuc">ROC-AUC Only</option>
+            </select>
+          </div>
+          <div class="relative h-72 sm:h-80 w-full flex-1">
+            <canvas id="overallPerfChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Error Rates Comparison (FPR vs FNR) -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="font-bold text-base">2. Security Error Rates: FPR vs FNR</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Lower is better — False Alerts (FPR) vs Missed Breaches (FNR) (%)</p>
+            </div>
+            <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300">Error Profile</span>
+          </div>
+          <div class="relative h-72 sm:h-80 w-full flex-1">
+            <canvas id="errorRatesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Computational Efficiency -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="font-bold text-base">3. Computational Efficiency</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Training Time (seconds) vs Prediction Time (seconds per test batch)</p>
+            </div>
+            <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300">Dual Axis</span>
+          </div>
+          <div class="relative h-72 sm:h-80 w-full flex-1">
+            <canvas id="efficiencyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 4: Actual UNSW-NB15 Dataset Partition -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="font-bold text-base">4. Actual UNSW-NB15 Benchmark Partition</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Official Dataset Records (Verified in Section XIII)</p>
+            </div>
+            <span class="text-[11px] font-mono px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold">Verified Data</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center flex-1">
+            <div class="sm:col-span-6 relative h-56 sm:h-64">
+              <canvas id="datasetChart"></canvas>
+            </div>
+            <div class="sm:col-span-6 space-y-2.5 text-xs">
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <span class="text-slate-600 dark:text-slate-300">Training Records</span>
+                <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400">175,341 (68.05%)</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <span class="text-slate-600 dark:text-slate-300">Testing Records</span>
+                <span class="font-mono font-bold text-cyan-600 dark:text-cyan-400">82,332 (31.95%)</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <span class="text-slate-600 dark:text-slate-300">Total Records</span>
+                <span class="font-mono font-bold text-slate-900 dark:text-white">257,673</span>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <span class="text-slate-600 dark:text-slate-300">Classes & Categories</span>
+                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">2 Classes • 9 Attacks</span>
+              </div>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed pt-1">
+                <strong>Protocol Note:</strong> Section VIII.C additionally specifies an <strong>80% / 20% stratified split</strong> with <strong>5-fold stratified cross-validation</strong> on the training partition for hyperparameter tuning and model selection.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. RESEARCH QUESTIONS, METHODOLOGY & METRICS ==================== -->
+    <section id="methodology" class="space-y-10 scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-indigo-600 dark:text-indigo-400 font-semibold">Sections VII, VIII, IX, X & XI</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Research Questions, Methodology & Operational Metrics</h2>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+          Controlled experimental design, statistical analysis plan, and standardized metric formulas.
+        </p>
+      </div>
+
+      <!-- Research Questions & Hypotheses (Section VII) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-5 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <h3 class="text-lg font-bold">VII. Research Questions (RQ1–RQ4) & Hypotheses (H1–H4)</h3>
+          <div class="inline-flex rounded-xl bg-slate-100 dark:bg-slate-800 p-1 text-xs font-semibold">
+            <button type="button" data-rq-tab="rq" class="rq-tab-btn px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-sm">Research Questions</button>
+            <button type="button" data-rq-tab="hyp" class="rq-tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300">Hypotheses</button>
+          </div>
+        </div>
+
+        <div id="rqPanel" class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">RQ1</span>
+            <p class="mt-2 font-semibold text-sm">Which of the six selected machine learning algorithms achieves the best classification performance for network intrusion detection?</p>
+            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400"><strong>Primary Evidence:</strong> Accuracy, precision, recall, F1-score, and ROC-AUC.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">RQ2</span>
+            <p class="mt-2 font-semibold text-sm">How do the algorithms differ in detecting malicious activities and controlling false positive rates?</p>
+            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400"><strong>Primary Evidence:</strong> Recall, false positive rate, precision, and confusion matrix.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">RQ3</span>
+            <p class="mt-2 font-semibold text-sm">How do training time and prediction time vary among the selected algorithms?</p>
+            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400"><strong>Primary Evidence:</strong> Training time, prediction time, and resource consumption.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/80">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">RQ4</span>
+            <p class="mt-2 font-semibold text-sm">How does class imbalance influence the detection of minority attack categories?</p>
+            <p class="mt-2 text-xs text-slate-500 dark:text-slate-400"><strong>Primary Evidence:</strong> Class-wise performance, macro-averaged F1-score, and minority-class recall.</p>
+          </div>
+        </div>
+
+        <div id="hypPanel" class="hidden p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-cyan-50/60 dark:bg-cyan-950/25 border border-cyan-200/80 dark:border-cyan-800/60">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300">H1 • Classification Performance</span>
+            <p class="mt-2 text-sm text-slate-700 dark:text-slate-200">There are statistically significant differences in macro-averaged F1-score among the six selected machine learning algorithms.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-cyan-50/60 dark:bg-cyan-950/25 border border-cyan-200/80 dark:border-cyan-800/60">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300">H2 • Threat Detection</span>
+            <p class="mt-2 text-sm text-slate-700 dark:text-slate-200">The selected algorithms demonstrate differences in recall and false positive rates when identifying malicious network activities.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-cyan-50/60 dark:bg-cyan-950/25 border border-cyan-200/80 dark:border-cyan-800/60">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300">H3 • Computational Efficiency</span>
+            <p class="mt-2 text-sm text-slate-700 dark:text-slate-200">The selected machine learning algorithms demonstrate differences in training time and prediction time.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-cyan-50/60 dark:bg-cyan-950/25 border border-cyan-200/80 dark:border-cyan-800/60">
+            <span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-cyan-100 dark:bg-cyan-900/60 text-cyan-700 dark:text-cyan-300">H4 • Dataset Imbalance</span>
+            <p class="mt-2 text-sm text-slate-700 dark:text-slate-200">Class imbalance handling influences the classification performance of machine learning algorithms, particularly for minority attack categories.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experimental Methodology & Statistical Plan (Sections VIII, X, XI) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+          <h3 class="text-lg font-bold">VIII. Experimental Methodology</h3>
+          <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/70">
+              <div class="font-mono text-xs text-indigo-600 dark:text-indigo-400 font-semibold">Experimental Unit</div>
+              <div class="font-semibold text-slate-900 dark:text-white mt-0.5">Algorithm × Dataset × Experimental Run</div>
+            </div>
+            <p><strong>Benchmark & Tasks:</strong> UNSW-NB15 serves as the primary benchmark. The primary task is binary classification (Normal vs. Malicious), with multiclass classification considered for individual attack categories subject to label quality.</p>
+            <p><strong>Data Assignment & Control:</strong> Identical stratified partitions (~80% training / 20% independent testing) ensure fairness. Five-fold stratified cross-validation is applied strictly within the training split for tuning.</p>
+            <p><strong>Implementation Stack:</strong> Python ecosystem utilizing <code class="font-mono text-xs px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800">Scikit-learn</code>, <code class="font-mono text-xs px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800">Pandas</code>, and <code class="font-mono text-xs px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-800">NumPy</code>.</p>
+          </div>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+          <h3 class="text-lg font-bold">X & XI. Statistical Analysis Plan & Metric Validation</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            Designed to verify whether observed differences in classification performance, threat detection capability, and computational efficiency are statistically significant rather than random variation.
+          </p>
+          <ul class="space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+              <span><strong>Cross-Validation:</strong> 5-fold stratified cross-validation across all six algorithms.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+              <span><strong>Descriptive Statistics:</strong> Mean, median, standard deviation, and confidence intervals reported per metric.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+              <span><strong>Non-Parametric Testing:</strong> Friedman test (where design assumptions hold) followed by appropriate post-hoc pairwise comparisons if significance is detected.</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">4</span>
+              <span><strong>Metric Validation (Sec. XI):</strong> Standardized formulas ensure balanced representation of detection effectiveness, false alarm control, and runtime efficiency.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 11 Operational Metrics Table (Section IX) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-800">
+          <h3 class="text-lg font-bold">IX. Operational Evaluation Metrics (11 Standardized Measures)</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Comprehensive evaluation spanning classification accuracy, security risk errors, and runtime efficiency.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-3 px-5 font-semibold">Metric</th>
+                <th class="py-3 px-5 font-semibold">Formula / Definition</th>
+                <th class="py-3 px-5 font-semibold">Cybersecurity Evaluation Role</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-800" id="metricsTableBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 6. ABLATION STUDY & THREATS TO VALIDITY ==================== -->
+    <section id="validity" class="space-y-10 scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-cyan-600 dark:text-cyan-400 font-semibold">Sections XII & XV</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Ablation Study & Threats to Validity</h2>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+          Component sensitivity analysis and systematic mitigation of 10 experimental validity risks.
+        </p>
+      </div>
+
+      <!-- Ablation Study (Section XII) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-7 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+          <div>
+            <h3 class="text-lg font-bold">XII. Ablation & Sensitivity Analysis</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Systematically removing pipeline components to isolate their contribution to breach detection.</p>
+          </div>
+          <span class="text-xs font-mono px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 self-start">Full + 6 Variants (A1–A6)</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="ablationGrid">
+          <!-- Populated via JS -->
+        </div>
+
+        <div class="mt-4 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300">
+          <strong>Model-Specific Sensitivity Note:</strong> Feature scaling removal (<strong>A2</strong>) is evaluated where technically appropriate—scaling exerts a significantly stronger influence on distance/margin models (<strong>SVM, KNN, Logistic Regression</strong>) than on tree-based algorithms (<strong>Decision Tree, Random Forest</strong>).
+        </div>
+      </div>
+
+      <!-- Threats to Validity Matrix (Section XV) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-bold">XV. Threats to Validity Matrix (10 Dimensions)</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Search or filter validity threats, associated risks, and methodological mitigations.</p>
+          </div>
+          <div class="relative w-full sm:w-64">
+            <input id="validitySearch" type="text" placeholder="Filter threats or mitigations..."
+              class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-200 border-b border-slate-200 dark:border-slate-700">
+                <th class="py-3 px-5 font-semibold w-1/5">Validity Threat</th>
+                <th class="py-3 px-5 font-semibold w-2/5">Identified Risk</th>
+                <th class="py-3 px-5 font-semibold w-2/5">Mitigation Strategy</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-800" id="validityTableBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 7. DISCUSSION, GOVERNANCE, CONCLUSION & REFERENCES ==================== -->
+    <section id="discussion" class="space-y-10 scroll-mt-20">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-semibold">Sections XIV & XVI–XX</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Discussion, Research Governance & References</h2>
+        </div>
+        <p class="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+          Practical takeaways, reproducibility commitments, ethical safeguards, and cited literature.
+        </p>
+      </div>
+
+      <!-- Discussion, Practical Significance, Future Research, Conclusion -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <span class="text-xs font-mono uppercase text-indigo-600 dark:text-indigo-400 font-semibold">Section XIV</span>
+          <h3 class="text-lg font-bold mt-1 mb-2">Discussion</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            No single ML algorithm is universally optimal across every cybersecurity environment. Suitability depends on dataset characteristics, attack distributions, available compute, and organizational risk tolerance (e.g., minimizing false alarms vs. maximizing breach recall). The study provides a disciplined framework for context-aware algorithm selection.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <span class="text-xs font-mono uppercase text-cyan-600 dark:text-cyan-400 font-semibold">Section XVIII</span>
+          <h3 class="text-lg font-bold mt-1 mb-2">Practical Significance</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            Organizations, businesses, educational institutions, and government agencies depend on digital infrastructure to manage sensitive information. Side-by-side insights into detection accuracy, false positive rates, and runtime latency help security engineers deploy reliable, resource-appropriate IDS solutions.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <span class="text-xs font-mono uppercase text-emerald-600 dark:text-emerald-400 font-semibold">Section XIX</span>
+          <h3 class="text-lg font-bold mt-1 mb-2">Future Research</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            Future extensions can expand this baseline comparison by integrating advanced ensemble and deep learning models, evaluating cross-dataset generalization (e.g., CICIDS2017, NSL-KDD), incorporating real-time streaming intrusion monitoring, and exploring adaptive concept-drift handling.
+          </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+          <span class="text-xs font-mono uppercase text-amber-600 dark:text-amber-400 font-semibold">Section XX</span>
+          <h3 class="text-lg font-bold mt-1 mb-2">Conclusion</h3>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            This research establishes a structured, multi-metric comparative methodology—combining dataset preprocessing, feature selection, stratified evaluation, error analysis, and computational profiling—to systematically benchmark six foundational ML algorithms for network security breach detection.
+          </p>
+        </div>
+      </div>
+
+      <!-- Governance Cards (XVI, XVII, Data/Code, COI, Acknowledgment) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="p-5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm mb-1.5">XVI. Reproducibility & Artifact Plan</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            Preserves complete records of dataset versions, preprocessing scripts, feature selection criteria, random seeds, hyperparameters, and evaluation logs so independent researchers can repeat the comparative benchmark.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm mb-1.5">XVII. Ethical Considerations</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            Adheres to strict data privacy, confidentiality, and responsible ML principles. Relies exclusively on authorized, publicly licensed cybersecurity benchmark datasets with no identifiable human-participant information.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800">
+          <h4 class="font-bold text-sm mb-1.5">Data & Code Availability</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            At the current manuscript stage, verified execution logs are pending completion. Upon finalization, dataset links (per licensing), preprocessing code, and six-model evaluation scripts will be documented for verification.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 sm:col-span-2 lg:col-span-1">
+          <h4 class="font-bold text-sm mb-1.5">Conflict of Interest</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            The authors <strong>Sagar Shahadev Kashid, Sanchit Sunil Tikhile, and Sohel Javed Shaikh</strong> declare no financial, personal, professional, or other conflicts of interest influencing this study.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-100/80 dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800 sm:col-span-2">
+          <h4 class="font-bold text-sm mb-1.5">Acknowledgment</h4>
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+            The authors thank the individuals, colleagues, and peers at International Institute of Management Science (IIMS) Chinchwad, Savitribai Phule Pune University, who provided feedback and assisted with application testing, experimental setup, and validation. No identifiable participant information is reported.
+          </p>
+        </div>
+      </div>
+
+      <!-- Complete References List [1] - [14] -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-bold">References ([1] – [14])</h3>
+          <span class="text-xs font-mono text-slate-500 dark:text-slate-400">14 Cited Works</span>
+        </div>
+        <ol class="space-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300" id="referencesList">
+          <!-- Populated via JS -->
+        </ol>
+      </div>
+    </section>
+  
+    <!-- ==================== ADDED: PROJECT EXPLANATION & VIVA PREPARATION ==================== -->
+    <section id="viva-preparation" class="space-y-8 scroll-mt-20">
+      <div class="border-b border-slate-200 dark:border-slate-800 pb-4">
+        <span class="text-xs font-mono uppercase tracking-widest text-amber-600 dark:text-amber-400 font-semibold">Added Study Guide</span>
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight mt-1">Project Explanation & Viva Preparation</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">A quick revision section covering the project, dataset, algorithms, metrics, implementation and likely examiner questions.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+          <h3 class="font-bold text-lg mb-3">Explain the project in 30 seconds</h3>
+          <p class="text-sm leading-relaxed text-slate-600 dark:text-slate-300">Our project compares six supervised machine-learning classifiers for identifying normal and malicious network traffic. We use the labelled UNSW-NB15 benchmark, prepare its network-flow features, train Decision Tree, Random Forest, Linear SVM, KNN, Naive Bayes and Logistic Regression, and evaluate their predictions using classification metrics and execution time. The goal is to compare their strengths and limitations for network intrusion detection.</p>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+          <h3 class="font-bold text-lg mb-3">What the working prototype does</h3>
+          <ul class="text-sm leading-relaxed text-slate-600 dark:text-slate-300 list-disc pl-5 space-y-1">
+            <li>Loads separate training and testing CSV files.</li>
+            <li>Maps the binary label to Normal (0) and Attack (1).</li>
+            <li>Preprocesses numerical and categorical features.</li>
+            <li>Trains six supervised classifiers.</li>
+            <li>Calculates metrics from actual predictions.</li>
+            <li>Displays charts, confusion matrices and sample predictions.</li>
+            <li>Exports the measured result table.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 rounded-2xl p-5">
+        <h3 class="font-bold text-amber-900 dark:text-amber-200">Research integrity reminder</h3>
+        <p class="text-sm text-amber-900/90 dark:text-amber-100/90 mt-2">The charts earlier in this portal are explicitly marked illustrative until replaced with verified experimental output. Use the Live ML Experiment section to generate measured results. The current implementation does not run 5-fold cross-validation, statistical significance testing, live packet capture, attack-family multiclass classification or automatic attack blocking. Do not claim those functions have been implemented.</p>
+      </div>
+
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6">
+        <h3 class="font-bold text-lg mb-4">Frequently asked viva questions</h3>
+        <div class="space-y-3">
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">1. What is the main objective of your project?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">To compare six machine-learning algorithms for classifying network traffic as normal or malicious, using a common benchmark and consistent evaluation metrics.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">2. What is an Intrusion Detection System?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">An IDS monitors system or network activity to identify suspicious or potentially malicious behaviour.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">3. Why did you choose UNSW-NB15?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It is a publicly available labelled network intrusion detection benchmark containing normal traffic and multiple attack categories.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">4. How many records are in the documented dataset?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">257,673 total records: 175,341 training records and 82,332 testing records. The application must still report the actual number of rows uploaded and used in each run.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">5. What are the nine attack categories?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Fuzzers, Analysis, Backdoors, DoS, Exploits, Generic, Reconnaissance, Shellcode and Worms.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">6. What is binary classification in this project?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">The target is represented as two classes: Normal = 0 and Attack = 1. The current model does not identify the individual attack family.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">7. What is supervised learning?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It is machine learning using labelled examples, where the correct output is provided during training.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">8. Explain Decision Tree.</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It predicts a class by following feature-based conditions arranged in a tree of decisions.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">9. Explain Random Forest.</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It combines predictions from multiple decision trees, commonly using majority voting for classification.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">10. Explain SVM.</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Support Vector Machine finds a decision boundary, called a hyperplane, that separates classes. This implementation uses LinearSVC.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">11. Explain KNN.</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">K-Nearest Neighbours predicts a record's class from the majority class among its K closest training examples.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">12. Explain Naive Bayes.</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It is a probabilistic classifier based on Bayes' theorem and a conditional-independence assumption. This implementation uses MultinomialNB.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">13. Explain Logistic Regression.</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It estimates the probability of a class and applies a decision threshold to make a binary prediction.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">14. What is accuracy?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">The proportion of all predictions that are correct: (TP + TN) / (TP + TN + FP + FN).</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">15. What is precision?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Of the records predicted as attacks, the proportion that are actually attacks: TP / (TP + FP).</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">16. What is recall?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Of all actual attacks, the proportion correctly detected: TP / (TP + FN).</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">17. What is F1-score?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">The harmonic mean of precision and recall: 2 × (precision × recall) / (precision + recall).</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">18. What is a false positive?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Normal traffic incorrectly classified as an attack, potentially generating a false alarm.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">19. What is a false negative?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Actual attack traffic incorrectly classified as normal. This can allow malicious activity to go undetected.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">20. What is ROC-AUC?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">It measures how well a classifier separates the two classes across different decision thresholds.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">21. Why separate training and testing data?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Training data is used to fit the model; separate testing data estimates how well it performs on unseen records.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">22. What is overfitting?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">When a model learns training-specific details or noise and does not generalise well to unseen data.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">23. What is data leakage?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">When information that should not be available during training influences the model, making evaluation results overly optimistic.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">24. Which tools and technologies are used?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Python, Pandas, NumPy, Scikit-learn, Streamlit and Plotly.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">25. What is the research gap?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">The study aims to provide a controlled comparison of six classifiers using consistent data partitions and multiple detection and efficiency metrics, rather than relying on accuracy alone.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">26. What are H0 and H1?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">H0 states there is no statistically significant performance difference; H1 states there is a statistically significant difference. A statistical test and p-value are required before deciding between them.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">27. Which algorithm performed best?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Use the actual result table generated by the Live ML Experiment. Do not name a winner before the experiment is run and its metrics are checked.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">28. Does the application detect live attacks?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">No. It classifies prepared, labelled network-flow records from CSV files. It does not capture live packets or block attacks.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">29. Can it identify the exact attack family?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Not in the current binary classification configuration. Multiclass attack-family classification is future work.</p></details>
+          <details class="border border-slate-200 dark:border-slate-700 rounded-xl p-4"><summary class="font-semibold cursor-pointer">30. What is the future scope?</summary><p class="text-sm mt-3 text-slate-600 dark:text-slate-300">Future work may include multiclass classification, additional benchmark datasets, real-time packet ingestion, statistical significance testing, deep learning and carefully evaluated deployment integrations.</p></details>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-slate-900 dark:bg-slate-950 text-slate-400 border-t border-slate-800 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div>
+        <span class="font-semibold text-white">A Comparative Study of Machine Learning Algorithms for Security Breach Detection</span>
+        <span class="block mt-1">Sagar Shahadev Kashid • Sanchit Sunil Tikhile • Sohel Javed Shaikh — IIMS Chinchwad, Savitribai Phule Pune University</span>
+      </div>
+      <div class="font-mono text-slate-500">Interactive Academic Portal • UNSW-NB15 Protocol</div>
+    </div>
+  </footer>
+
+  <!-- ==================== INTERACTIVE DATA EDITOR MODAL ==================== -->
+  <div id="editorModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-4">
+        <div>
+          <h3 class="text-lg font-bold">Edit Experimental Results (Live Dashboard Sync)</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Enter verified Scikit-learn metrics (%) and execution times (s). All charts, radar profiles, and confusion matrices update immediately.
+          </p>
+        </div>
+        <button id="closeEditorBtn" type="button" aria-label="Close Editor"
+          class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-auto flex-1">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200">
+                <th class="p-2.5 font-semibold">Model</th>
+                <th class="p-2.5 font-semibold">Acc (%)</th>
+                <th class="p-2.5 font-semibold">Prec (%)</th>
+                <th class="p-2.5 font-semibold">Rec (%)</th>
+                <th class="p-2.5 font-semibold">Macro F1 (%)</th>
+                <th class="p-2.5 font-semibold">ROC-AUC (%)</th>
+                <th class="p-2.5 font-semibold">FPR (%)</th>
+                <th class="p-2.5 font-semibold">Train (s)</th>
+                <th class="p-2.5 font-semibold">Pred (s)</th>
+              </tr>
+            </thead>
+            <tbody id="editorTableBody" class="divide-y divide-slate-200 dark:divide-slate-800">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/50 flex flex-wrap items-center justify-between gap-3">
+        <button id="resetDataBtn" type="button"
+          class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          Reset to Illustrative Defaults
+        </button>
+        <div class="flex items-center gap-2">
+          <button id="cancelEditorBtn" type="button"
+            class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-slate-800">
+            Cancel
+          </button>
+          <button id="saveDataBtn" type="button"
+            class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition-colors">
+            Save & Update All Charts
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs font-semibold shadow-xl border border-slate-700 dark:border-slate-300">
+    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+    <span id="toastMsg">Updated successfully</span>
+  </div>
+
+  <!-- ==================== APPLICATION JAVASCRIPT ==================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. RESEARCH PAPER DATA & ILLUSTRATIVE UNSW-NB15 SIMULATION PROFILES
+      // =========================================================================
+      // Official UNSW-NB15 test partition: 82,332 records (45,332 Attack, 37,000 Normal)
+      const TEST_ATTACK_COUNT = 45332;
+      const TEST_NORMAL_COUNT = 37000;
+
+      const DEFAULT_MODELS = [
+        {
+          id: 'dt',
+          code: 'M1',
+          name: 'Decision Tree',
+          shortName: 'Decision Tree',
+          requiresScaling: false,
+          mechanism: 'Constructs an understandable, hierarchical tree structure by recursively partitioning network traffic features based on information gain or Gini impurity to separate normal and malicious flows.',
+          preprocessing: 'Feature scaling is NOT required. Tree splits are invariant to monotonic feature scaling, though categorical encoding and duplicate removal remain essential.',
+          strengths: [
+            'Highly interpretable decision rules for security analysts',
+            'Fast training and very low prediction latency',
+            'Handles non-linear feature interactions naturally'
+          ],
+          limitations: [
+            'Prone to overfitting on noisy or high-dimensional traffic',
+            'Higher variance compared to ensemble methods',
+            'Can struggle with minority attack categories without pruning'
+          ],
+          metrics: { accuracy: 86.4, precision: 88.2, recall: 87.5, f1: 86.1, rocAuc: 86.3, fpr: 14.9, trainTime: 1.8, predTime: 0.04 }
+        },
+        {
+          id: 'rf',
+          code: 'M2',
+          name: 'Random Forest',
+          shortName: 'Random Forest',
+          requiresScaling: false,
+          mechanism: 'An ensemble learning method that constructs multiple decision trees on bootstrapped subsets of network records and aggregates their votes to achieve superior prediction stability and generalization.',
+          preprocessing: 'Feature scaling is NOT required. Benefits strongly from feature selection and class-weight balancing to improve minority attack recall.',
+          strengths: [
+            'Strong overall accuracy, Macro F1, and ROC-AUC on tabular traffic',
+            'Reduces overfitting compared to a single Decision Tree',
+            'Robust against noisy network features and outliers'
+          ],
+          limitations: [
+            'Higher memory usage and slower training than single trees',
+            'Less directly interpretable than a single Decision Tree',
+            'Prediction latency increases with number of estimators'
+          ],
+          metrics: { accuracy: 90.8, precision: 91.4, recall: 92.6, f1: 90.6, rocAuc: 96.4, fpr: 11.4, trainTime: 18.5, predTime: 0.65 }
+        },
+        {
+          id: 'svm',
+          code: 'M3',
+          name: 'Support Vector Machine (SVM)',
+          shortName: 'SVM',
+          requiresScaling: true,
+          mechanism: 'Identifies an optimal maximum-margin hyperplane (using linear or kernel transformations) to establish clear decision boundaries separating normal network traffic from malicious intrusions.',
+          preprocessing: 'Feature scaling (Standardization / Normalization) IS STRICTLY REQUIRED. Distance and margin calculations are highly sensitive to feature magnitude.',
+          strengths: [
+            'Effective in high-dimensional network feature spaces',
+            'Strong theoretical generalization with maximum-margin boundaries',
+            'Capable of modeling complex non-linear boundaries via kernels'
+          ],
+          limitations: [
+            'High computational training time on large datasets (175k+ records)',
+            'Sensitive to hyperparameter choices (C, gamma) and scaling',
+            'Memory-intensive for non-linear kernel matrices'
+          ],
+          metrics: { accuracy: 84.9, precision: 83.6, recall: 90.4, f1: 84.4, rocAuc: 92.1, fpr: 21.8, trainTime: 94.2, predTime: 12.4 }
+        },
+        {
+          id: 'knn',
+          code: 'M4',
+          name: 'K-Nearest Neighbours (KNN)',
+          shortName: 'KNN',
+          requiresScaling: true,
+          mechanism: 'A non-parametric, instance-based classifier that categorizes each incoming network flow based on the majority class among its K most similar historical data points in feature space.',
+          preprocessing: 'Feature scaling IS STRICTLY REQUIRED. Unscaled features with large numeric ranges (e.g., byte counts) will dominate Euclidean distance calculations.',
+          strengths: [
+            'Virtually zero training time (lazy learner)',
+            'Naturally adapts to multi-modal and irregular attack clusters',
+            'Simple conceptual model without distributional assumptions'
+          ],
+          limitations: [
+            'Very slow prediction time on large test sets (computes distances)',
+            'High memory footprint storing the entire training set',
+            'Degrades in high-dimensional spaces without feature selection'
+          ],
+          metrics: { accuracy: 85.7, precision: 85.9, recall: 88.8, f1: 85.4, rocAuc: 90.8, fpr: 18.1, trainTime: 0.4, predTime: 28.6 }
+        },
+        {
+          id: 'nb',
+          code: 'M5',
+          name: 'Naive Bayes',
+          shortName: 'Naive Bayes',
+          requiresScaling: false,
+          mechanism: 'Applies Bayes’ theorem with a conditional independence assumption between network features to compute the posterior probability that a traffic record belongs to normal or malicious classes.',
+          preprocessing: 'Scaling is generally not required for Gaussian NB, though handling skewed distributions and removing redundant/collinear features improves probability estimates.',
+          strengths: [
+            'Extremely fast training and real-time prediction speed',
+            'Very low CPU and memory resource consumption',
+            'Serves as a fast probabilistic baseline for IDS'
+          ],
+          limitations: [
+            'Feature independence assumption rarely holds in network traffic',
+            'Typically yields higher False Positive Rates (alert fatigue)',
+            'Lower precision and Macro F1 on complex multi-vector attacks'
+          ],
+          metrics: { accuracy: 76.2, precision: 74.8, recall: 86.2, f1: 75.4, rocAuc: 82.5, fpr: 36.1, trainTime: 0.25, predTime: 0.03 }
+        },
+        {
+          id: 'lr',
+          code: 'M6',
+          name: 'Logistic Regression',
+          shortName: 'Logistic Reg.',
+          requiresScaling: true,
+          mechanism: 'Estimates the probability of a network record being malicious using a logistic (sigmoid) function over a weighted linear combination of input traffic features.',
+          preprocessing: 'Feature scaling IS REQUIRED for fast solver convergence and fair L1/L2 regularization penalties across heterogeneous network attributes.',
+          strengths: [
+            'Fast training, low memory footprint, and ultra-low inference latency',
+            'Produces well-calibrated breach probability scores',
+            'Transparent feature weights aid security interpretability'
+          ],
+          limitations: [
+            'Assumes linear decision boundary in feature space',
+            'Struggles with complex non-linear attack signatures',
+            'Performance drops when features exhibit strong multicollinearity'
+          ],
+          metrics: { accuracy: 81.5, precision: 80.2, recall: 88.1, f1: 81.0, rocAuc: 88.7, fpr: 26.6, trainTime: 2.9, predTime: 0.02 }
+        }
+      ];
+
+      // Deep clone state so user edits can be reset cleanly
+      let modelsData = JSON.parse(JSON.stringify(DEFAULT_MODELS));
+      let isCustomData = false;
+      let selectedModelIndex = 1; // Default highlight: Random Forest (M2)
+
+      // 8-Layer Proposed Framework (Section IV)
+      const FRAMEWORK_LAYERS = [
+        { num: '01', name: 'Data Collection', fn: 'Collect cybersecurity-related information', artifact: 'Obtain labelled network traffic and security datasets (UNSW-NB15).' },
+        { num: '02', name: 'Data Preprocessing', fn: 'Prepare data for machine learning', artifact: 'Remove duplicates, handle missing values, encode categorical features, and normalize data.' },
+        { num: '03', name: 'Feature Selection', fn: 'Identify important data attributes', artifact: 'Select relevant network features and reduce unnecessary/redundant information.' },
+        { num: '04', name: 'Model Training', fn: 'Train selected machine learning algorithms', artifact: 'Apply Decision Tree, Random Forest, SVM, KNN, Naive Bayes, and Logistic Regression.' },
+        { num: '05', name: 'Prediction & Classification', fn: 'Identify normal and malicious activities', artifact: 'Classify unseen network traffic records into predefined normal/attack categories.' },
+        { num: '06', name: 'Performance Evaluation', fn: 'Measure model effectiveness', artifact: 'Calculate accuracy, precision, recall, F1-score, ROC-AUC, and false positive rate.' },
+        { num: '07', name: 'Detection & Monitoring', fn: 'Support cybersecurity monitoring', artifact: 'Use the trained model to identify potentially suspicious network activities.' },
+        { num: '08', name: 'Control & Evaluation', fn: 'Maintain experimental consistency', artifact: 'Record configurations, training results, execution time, and evaluation outcomes.' }
+      ];
+
+      // 11 Operational Metrics (Section IX)
+      const OPERATIONAL_METRICS = [
+        { name: 'Accuracy', def: 'Correctly classified records / Total records = (TP + TN) / (TP + TN + FP + FN)', role: 'Overall classification performance' },
+        { name: 'Precision', def: 'TP / (TP + FP)', role: 'Prediction reliability (minimizing false alarms)' },
+        { name: 'Recall (TPR)', def: 'TP / (TP + FN)', role: 'Security threat detection capability' },
+        { name: 'F1-Score', def: '2 × (Precision × Recall) / (Precision + Recall)', role: 'Balanced classification performance (macro-averaged for imbalance)' },
+        { name: 'ROC-AUC', def: 'Area under the Receiver Operating Characteristic curve', role: 'Threshold-independent class discrimination capability' },
+        { name: 'FPR', def: 'FP / (FP + TN)', role: 'False security alert measurement (alert fatigue)' },
+        { name: 'FNR', def: 'FN / (FN + TP) = 1 − Recall', role: 'Missed threat measurement (undetected breaches)' },
+        { name: 'Specificity (TNR)', def: 'TN / (TN + FP) = 1 − FPR', role: 'Normal activity identification accuracy' },
+        { name: 'Training Time', def: 'Elapsed wall-clock time required to fit a model', role: 'Training efficiency & scalability' },
+        { name: 'Prediction Time', def: 'Time required to classify test records', role: 'Real-time detection efficiency & latency' },
+        { name: 'Resource Consumption', def: 'CPU utilization and memory (RAM) footprint', role: 'Practical deployment & hardware requirements' }
+      ];
+
+      // Ablation Study (Section XII)
+      const ABLATION_VARIANTS = [
+        { id: 'Full', removed: 'None (Reference)', purpose: 'Reference baseline configuration using the complete proposed 8-layer framework.', highlight: true },
+        { id: 'A1', removed: 'Feature Selection', purpose: 'Estimate the contribution of feature selection to detection performance and runtime.' },
+        { id: 'A2', removed: 'Data Normalization / Scaling', purpose: 'Examine the effect of feature scaling (critical for SVM, KNN, and Logistic Regression).' },
+        { id: 'A3', removed: 'Class Imbalance Handling', purpose: 'Evaluate the importance of class balancing techniques for minority attack categories.' },
+        { id: 'A4', removed: 'Hyperparameter Tuning', purpose: 'Examine the contribution of systematic parameter optimization on model accuracy.' },
+        { id: 'A5', removed: 'Data Preprocessing', purpose: 'Evaluate the impact of cleaning, duplicate removal, and encoding on model reliability.' },
+        { id: 'A6', removed: 'Cross-Validation', purpose: 'Examine the contribution of 5-fold validation to model selection and performance stability.' }
+      ];
+
+      // Threats to Validity (Section XV)
+      const VALIDITY_THREATS = [
+        { threat: 'Internal Validity', risk: 'Differences in data partitioning, preprocessing, or model configuration may influence performance.', mitigation: 'Use consistent experimental procedures, fixed data partitions, and controlled configurations.' },
+        { threat: 'Construct Validity', risk: 'Selected performance metrics may not fully represent practical cybersecurity effectiveness.', mitigation: 'Evaluate accuracy, precision, recall, F1-score, ROC-AUC, FPR, and FNR jointly.' },
+        { threat: 'Measurement Validity', risk: 'Incorrect calculation of performance metrics or inconsistent execution-time measurements may affect results.', mitigation: 'Use standardized evaluation formulas and documented timing measurement procedures.' },
+        { threat: 'Evaluation Leakage', risk: 'Information from testing data may unintentionally influence model training or parameter selection.', mitigation: 'Maintain strictly independent training, validation, and holdout testing datasets.' },
+        { threat: 'Model Confounding', risk: 'Different hyperparameters, scaling procedures, or software versions may skew algorithm comparisons.', mitigation: 'Document all model configurations and apply consistent tuning procedures.' },
+        { threat: 'Dataset Confounding', risk: 'Dataset imbalance, outdated attack patterns, or duplicate records may introduce bias.', mitigation: 'Examine dataset quality, class distribution, and remove duplicate records before experimentation.' },
+        { threat: 'External Validity', risk: 'Results obtained from one dataset may not generalize to other cybersecurity environments.', mitigation: 'Consider additional benchmark datasets and diverse attack categories in future studies.' },
+        { threat: 'Statistical Conclusion Validity', risk: 'Small sample sizes, dependent observations, or multiple comparisons may produce misleading conclusions.', mitigation: 'Use appropriate statistical tests (Friedman), effect sizes, confidence intervals, and multiplicity correction.' },
+        { threat: 'Reproducibility', risk: 'Missing experiment details may prevent other researchers from reproducing the results.', mitigation: 'Record dataset versions, software configurations, random seeds, and model parameters.' },
+        { threat: 'Ethical Validity', risk: 'Network traffic datasets may contain sensitive or identifiable information.', mitigation: 'Use appropriately licensed benchmark datasets and follow privacy and data protection requirements.' }
+      ];
+
+      // Complete References [1] - [14]
+      const REFERENCES = [
+        { num: 1, text: 'A. H. Ali, M. Charfeddine, B. Ammar, B. B. Hamed, F. Albalwy, A. Alqarafi, and A. Hussain, "Unveiling machine learning strategies and considerations in intrusion detection systems: A comprehensive survey," Frontiers in Computer Science, vol. 6, Art. no. 1387354, 2024.', doi: '10.3389/fcomp.2024.1387354' },
+        { num: 2, text: 'H. M. R. U. Rehman et al., "A systematic literature study of machine learning techniques based intrusion detection: Datasets, models, challenges, and future directions," Journal of Big Data, vol. 12, Art. no. 264, 2025.', doi: '10.1186/s40537-025-01323-2' },
+        { num: 3, text: 'M. Tavallaee, E. Bagheri, W. Lu, and A. A. Ghorbani, "A detailed analysis of the KDD CUP 99 data set," in Proc. IEEE Symposium on Computational Intelligence for Security and Defense Applications (CISDA), Ottawa, Canada, 2009, pp. 1–6.', doi: '10.1109/CISDA.2009.5356528' },
+        { num: 4, text: 'N. Moustafa and J. Slay, "UNSW-NB15: A comprehensive data set for network intrusion detection systems (UNSW-NB15 network data set)," in Proc. Military Communications and Information Systems Conference (MilCIS), Canberra, Australia, 2015, pp. 1–6.', doi: '10.1109/MilCIS.2015.7348942' },
+        { num: 5, text: 'I. Sharafaldin, A. Habibi Lashkari, and A. A. Ghorbani, "Toward generating a new intrusion detection dataset and intrusion traffic characterization," in Proc. 4th International Conference on Information Systems Security and Privacy (ICISSP), 2018, pp. 108–116.', doi: '10.5220/0006639801080116' },
+        { num: 6, text: 'J. R. Quinlan, C4.5: Programs for Machine Learning. San Mateo, CA, USA: Morgan Kaufmann, 1993.', doi: null },
+        { num: 7, text: 'L. Breiman, "Random forests," Machine Learning, vol. 45, pp. 5–32, 2001.', doi: '10.1023/A:1010933404324' },
+        { num: 8, text: 'C. Cortes and V. Vapnik, "Support-vector networks," Machine Learning, vol. 20, pp. 273–297, 1995.', doi: '10.1007/BF00994018' },
+        { num: 9, text: 'T. M. Cover and P. E. Hart, "Nearest neighbor pattern classification," IEEE Transactions on Information Theory, vol. 13, no. 1, pp. 21–27, 1967.', doi: '10.1109/TIT.1967.1053964' },
+        { num: 10, text: 'P. M. Domingos and M. J. Pazzani, "On the optimality of the simple Bayesian classifier under zero-one loss," Machine Learning, vol. 29, pp. 103–130, 1997.', doi: '10.1023/A:1007413511361' },
+        { num: 11, text: 'D. W. Hosmer, Jr., S. Lemeshow, and R. X. Sturdivant, Applied Logistic Regression, 3rd ed. Hoboken, NJ, USA: Wiley, 2013.', doi: '10.1002/9781118548387' },
+        { num: 12, text: 'F. Pedregosa et al., "Scikit-learn: Machine learning in Python," Journal of Machine Learning Research, vol. 12, pp. 2825–2830, 2011.', doi: null },
+        { num: 13, text: 'J. Demšar, "Statistical comparisons of classifiers over multiple data sets," Journal of Machine Learning Research, vol. 7, pp. 1–30, 2006.', doi: null },
+        { num: 14, text: 'M. Sokolova and G. Lapalme, "A systematic analysis of performance measures for classification tasks," Information Processing & Management, vol. 45, no. 4, pp. 427–437, 2009.', doi: '10.1016/j.ipm.2009.03.002' }
+      ];
+
+      // =========================================================================
+      // 2. CHART INSTANCES & THEME HELPERS
+      // =========================================================================
+      let radarChart = null;
+      let overallChart = null;
+      let errorChart = null;
+      let efficiencyChart = null;
+      let datasetChart = null;
+
+      function getChartColors() {
+        const isDark = document.documentElement.classList.contains('dark');
+        return {
+          text: isDark ? '#cbd5e1' : '#334155',
+          muted: isDark ? '#94a3b8' : '#64748b',
+          grid: isDark ? 'rgba(148, 163, 184, 0.14)' : 'rgba(148, 163, 184, 0.25)',
+          tooltipBg: isDark ? '#0f172a' : '#1e293b',
+          radarAngle: isDark ? 'rgba(148, 163, 184, 0.2)' : 'rgba(100, 116, 139, 0.2)'
+        };
+      }
+
+      // =========================================================================
+      // 3. RENDER STATIC / SEMI-DYNAMIC SECTIONS
+      // =========================================================================
+      function renderFramework() {
+        const container = document.getElementById('frameworkGrid');
+        container.innerHTML = FRAMEWORK_LAYERS.map(layer => `
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">Layer ${layer.num}</span>
+              </div>
+              <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1.5">${layer.name}</h4>
+              <p class="text-xs font-medium text-cyan-700 dark:text-cyan-400 mb-2">${layer.fn}</p>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed pt-2 border-t border-slate-100 dark:border-slate-800">
+              ${layer.artifact}
+            </p>
+          </div>
+        `).join('');
+      }
+
+      function renderMetricsTable() {
+        const tbody = document.getElementById('metricsTableBody');
+        tbody.innerHTML = OPERATIONAL_METRICS.map(m => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="py-3 px-5 font-semibold text-slate-900 dark:text-white whitespace-nowrap">${m.name}</td>
+            <td class="py-3 px-5 font-mono text-xs text-indigo-700 dark:text-indigo-300">${m.def}</td>
+            <td class="py-3 px-5 text-slate-600 dark:text-slate-400">${m.role}</td>
+          </tr>
+        `).join('');
+      }
+
+      function renderAblation() {
+        const grid = document.getElementById('ablationGrid');
+        grid.innerHTML = ABLATION_VARIANTS.map(v => `
+          <div class="p-4 rounded-xl border ${v.highlight
+            ? 'bg-indigo-50/80 dark:bg-indigo-950/40 border-indigo-300 dark:border-indigo-700 sm:col-span-2 lg:col-span-1'
+            : 'bg-slate-50/80 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/80'}">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-xs font-bold px-2 py-0.5 rounded ${v.highlight ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200'}">${v.id}</span>
+            </div>
+            <div class="text-xs font-semibold text-slate-900 dark:text-white mb-1">Removed: ${v.removed}</div>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">${v.purpose}</p>
+          </div>
+        `).join('');
+      }
+
+      function renderValidityTable(filter = '') {
+        const tbody = document.getElementById('validityTableBody');
+        const q = filter.trim().toLowerCase();
+        const filtered = VALIDITY_THREATS.filter(item =>
+          !q ||
+          item.threat.toLowerCase().includes(q) ||
+          item.risk.toLowerCase().includes(q) ||
+          item.mitigation.toLowerCase().includes(q)
+        );
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="py-8 text-center text-slate-500">No matching validity threats found for "${filter}".</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map(item => `
+          <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="py-3.5 px-5 font-semibold text-indigo-600 dark:text-indigo-400 align-top">${item.threat}</td>
+            <td class="py-3.5 px-5 text-slate-600 dark:text-slate-300 align-top">${item.risk}</td>
+            <td class="py-3.5 px-5 text-slate-700 dark:text-slate-200 align-top">${item.mitigation}</td>
+          </tr>
+        `).join('');
+      }
+
+      function renderReferences() {
+        const list = document.getElementById('referencesList');
+        list.innerHTML = REFERENCES.map(ref => `
+          <li class="flex gap-3 leading-relaxed">
+            <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400 shrink-0">[${ref.num}]</span>
+            <span>
+              ${ref.text}
+              ${ref.doi ? `<a href="https://doi.org/${ref.doi}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 ml-1.5 font-mono text-xs text-cyan-600 dark:text-cyan-400 hover:underline">doi:${ref.doi}</a>` : ''}
+            </span>
+          </li>
+        `).join('');
+      }
+
+      // =========================================================================
+      // 4. MODEL SELECTOR & INDIVIDUAL DEEP-DIVE
+      // =========================================================================
+      function renderModelTabs() {
+        const tabsContainer = document.getElementById('modelTabs');
+        tabsContainer.innerHTML = modelsData.map((m, idx) => {
+          const active = idx === selectedModelIndex;
+          return `
+            <button type="button" role="tab" aria-selected="${active}" data-model-idx="${idx}"
+              class="model-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${
+                active
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:border-indigo-400'
+              }">
+              <span class="font-mono text-[11px] opacity-80">${m.code}</span>
+              <span>${m.shortName}</span>
+            </button>
+          `;
+        }).join('');
+
+        tabsContainer.querySelectorAll('.model-tab').forEach(btn => {
+          btn.addEventListener('click', () => {
+            selectedModelIndex = Number(btn.dataset.modelIdx);
+            renderModelTabs();
+            renderSelectedModel();
+          });
+        });
+      }
+
+      function renderSelectedModel() {
+        const m = modelsData[selectedModelIndex];
+        const specificity = Math.max(0, +(100 - m.metrics.fpr).toFixed(1));
+        const fnr = Math.max(0, +(100 - m.metrics.recall).toFixed(1));
+
+        document.getElementById('mCode').textContent = m.code;
+        document.getElementById('mName').textContent = m.name;
+        document.getElementById('mMechanism').textContent = m.mechanism;
+        document.getElementById('mPreprocessing').textContent = m.preprocessing;
+
+        const scalingBadge = document.getElementById('mScalingBadge');
+        if (m.requiresScaling) {
+          scalingBadge.textContent = 'Requires Feature Scaling';
+          scalingBadge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-cyan-100 dark:bg-cyan-900/50 text-cyan-800 dark:text-cyan-300';
+        } else {
+          scalingBadge.textContent = 'Scale-Invariant / Tree or Prob.';
+          scalingBadge.className = 'px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300';
+        }
+
+        const dataTag = document.getElementById('mDataTag');
+        if (isCustomData) {
+          dataTag.textContent = 'User-Entered Data';
+          dataTag.className = 'px-2.5 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-semibold';
+        } else {
+          dataTag.textContent = 'Illustrative Profile';
+          dataTag.className = 'px-2.5 py-1 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 text-xs font-mono';
+        }
+
+        document.getElementById('mStrengths').innerHTML = m.strengths.map(s => `<li>${s}</li>`).join('');
+        document.getElementById('mLimitations').innerHTML = m.limitations.map(l => `<li>${l}</li>`).join('');
+
+        // Quick metric strip
+        const strip = [
+          { label: 'Acc', val: m.metrics.accuracy + '%' },
+          { label: 'Prec', val: m.metrics.precision + '%' },
+          { label: 'Rec', val: m.metrics.recall + '%' },
+          { label: 'F1', val: m.metrics.f1 + '%' },
+          { label: 'AUC', val: m.metrics.rocAuc + '%' },
+          { label: 'FPR', val: m.metrics.fpr + '%' }
+        ];
+        document.getElementById('mQuickMetrics').innerHTML = strip.map(item => `
+          <div class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-center border border-slate-200 dark:border-slate-700">
+            <div class="text-[10px] font-mono uppercase text-slate-500 dark:text-slate-400">${item.label}</div>
+            <div class="text-xs sm:text-sm font-bold font-mono text-slate-900 dark:text-white mt-0.5">${item.val}</div>
+          </div>
+        `).join('');
+
+        // Derived Confusion Matrix (using UNSW-NB15 Test Set: 45,332 Attack, 37,000 Normal)
+        const tp = Math.round(TEST_ATTACK_COUNT * (m.metrics.recall / 100));
+        const fn = TEST_ATTACK_COUNT - tp;
+        const fp = Math.round(TEST_NORMAL_COUNT * (m.metrics.fpr / 100));
+        const tn = TEST_NORMAL_COUNT - fp;
+
+        document.getElementById('cmTP').textContent = tp.toLocaleString();
+        document.getElementById('cmFN').textContent = fn.toLocaleString();
+        document.getElementById('cmFP').textContent = fp.toLocaleString();
+        document.getElementById('cmTN').textContent = tn.toLocaleString();
+
+        // Update Individual Radar Chart
+        renderRadarChart(m, specificity);
+      }
+
+      // =========================================================================
+      // 5. CHART.JS VISUALIZATIONS
+      // =========================================================================
+      function renderRadarChart(model, specificity) {
+        const ctx = document.getElementById('modelRadarChart').getContext('2d');
+        const c = getChartColors();
+
+        if (radarChart) radarChart.destroy();
+
+        radarChart = new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels: ['Accuracy', 'Precision', 'Recall', 'Macro F1', 'ROC-AUC', 'Specificity'],
+            datasets: [{
+              label: model.name,
+              data: [
+                model.metrics.accuracy,
+                model.metrics.precision,
+                model.metrics.recall,
+                model.metrics.f1,
+                model.metrics.rocAuc,
+                specificity
+              ],
+              backgroundColor: 'rgba(99, 102, 241, 0.22)',
+              borderColor: '#6366f1',
+              borderWidth: 2.5,
+              pointBackgroundColor: '#06b6d4',
+              pointBorderColor: '#ffffff',
+              pointRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                min: 40,
+                max: 100,
+                ticks: { stepSize: 15, color: c.muted, backdropColor: 'transparent', font: { size: 10, family: 'JetBrains Mono' } },
+                grid: { color: c.grid },
+                angleLines: { color: c.radarAngle },
+                pointLabels: { color: c.text, font: { size: 11, weight: '600', family: 'Inter' } }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: c.tooltipBg,
+                callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}%` }
+              }
+            }
+          }
+        });
+      }
+
+      function renderOverallPerformanceChart() {
+        const ctx = document.getElementById('overallPerfChart').getContext('2d');
+        const c = getChartColors();
+        const filter = document.getElementById('metricFilter').value;
+        const labels = modelsData.map(m => m.shortName);
+
+        const allDatasets = [
+          { key: 'accuracy', label: 'Accuracy', data: modelsData.map(m => m.metrics.accuracy), backgroundColor: '#6366f1', borderRadius: 4 },
+          { key: 'precision', label: 'Precision', data: modelsData.map(m => m.metrics.precision), backgroundColor: '#06b6d4', borderRadius: 4 },
+          { key: 'recall', label: 'Recall', data: modelsData.map(m => m.metrics.recall), backgroundColor: '#10b981', borderRadius: 4 },
+          { key: 'f1', label: 'Macro F1', data: modelsData.map(m => m.metrics.f1), backgroundColor: '#f59e0b', borderRadius: 4 },
+          { key: 'rocAuc', label: 'ROC-AUC', data: modelsData.map(m => m.metrics.rocAuc), backgroundColor: '#8b5cf6', borderRadius: 4 }
+        ];
+
+        const datasets = filter === 'all' ? allDatasets : allDatasets.filter(d => d.key === filter);
+
+        if (overallChart) overallChart.destroy();
+
+        overallChart = new Chart(ctx, {
+          type: 'bar',
+          data: { labels, datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                min: 50,
+                max: 100,
+                grid: { color: c.grid },
+                ticks: { color: c.muted, callback: v => v + '%', font: { size: 11, family: 'JetBrains Mono' } }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: c.text, font: { size: 11, weight: '500' } }
+              }
+            },
+            plugins: {
+              legend: { position: 'bottom', labels: { color: c.text, boxWidth: 12, padding: 14, font: { size: 11 } } },
+              tooltip: { backgroundColor: c.tooltipBg, callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}%` } }
+            }
+          }
+        });
+      }
+
+      function renderErrorRatesChart() {
+        const ctx = document.getElementById('errorRatesChart').getContext('2d');
+        const c = getChartColors();
+        const labels = modelsData.map(m => m.shortName);
+        const fprs = modelsData.map(m => m.metrics.fpr);
+        const fnrs = modelsData.map(m => +(100 - m.metrics.recall).toFixed(1));
+
+        if (errorChart) errorChart.destroy();
+
+        errorChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              { label: 'False Positive Rate (FPR %)', data: fprs, backgroundColor: '#f59e0b', borderRadius: 5 },
+              { label: 'False Negative Rate (FNR %)', data: fnrs, backgroundColor: '#f43f5e', borderRadius: 5 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { color: c.grid },
+                ticks: { color: c.muted, callback: v => v + '%', font: { size: 11, family: 'JetBrains Mono' } }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: c.text, font: { size: 11, weight: '500' } }
+              }
+            },
+            plugins: {
+              legend: { position: 'bottom', labels: { color: c.text, boxWidth: 12, padding: 14, font: { size: 11 } } },
+              tooltip: { backgroundColor: c.tooltipBg, callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}%` } }
+            }
+          }
+        });
+      }
+
+      function renderEfficiencyChart() {
+        const ctx = document.getElementById('efficiencyChart').getContext('2d');
+        const c = getChartColors();
+        const labels = modelsData.map(m => m.shortName);
+
+        if (efficiencyChart) efficiencyChart.destroy();
+
+        efficiencyChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: 'Training Time (s)',
+                data: modelsData.map(m => m.metrics.trainTime),
+                backgroundColor: '#6366f1',
+                borderRadius: 5,
+                yAxisID: 'y'
+              },
+              {
+                label: 'Prediction Time (s)',
+                data: modelsData.map(m => m.metrics.predTime),
+                backgroundColor: '#06b6d4',
+                borderRadius: 5,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                type: 'linear',
+                position: 'left',
+                beginAtZero: true,
+                title: { display: true, text: 'Training (s)', color: '#6366f1', font: { size: 11, weight: '600' } },
+                grid: { color: c.grid },
+                ticks: { color: c.muted, font: { size: 10, family: 'JetBrains Mono' } }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                beginAtZero: true,
+                title: { display: true, text: 'Prediction (s)', color: '#06b6d4', font: { size: 11, weight: '600' } },
+                grid: { drawOnChartArea: false },
+                ticks: { color: c.muted, font: { size: 10, family: 'JetBrains Mono' } }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: c.text, font: { size: 11, weight: '500' } }
+              }
+            },
+            plugins: {
+              legend: { position: 'bottom', labels: { color: c.text, boxWidth: 12, padding: 14, font: { size: 11 } } },
+              tooltip: { backgroundColor: c.tooltipBg, callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}s` } }
+            }
+          }
+        });
+      }
+
+      function renderDatasetChart() {
+        const ctx = document.getElementById('datasetChart').getContext('2d');
+        const c = getChartColors();
+
+        if (datasetChart) datasetChart.destroy();
+
+        datasetChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Training Data (175,341)', 'Testing Data (82,332)'],
+            datasets: [{
+              data: [175341, 82332],
+              backgroundColor: ['#6366f1', '#06b6d4'],
+              borderColor: document.documentElement.classList.contains('dark') ? '#0f172a' : '#ffffff',
+              borderWidth: 3,
+              hoverOffset: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '64%',
+            plugins: {
+              legend: { position: 'bottom', labels: { color: c.text, boxWidth: 12, padding: 12, font: { size: 11 } } },
+              tooltip: {
+                backgroundColor: c.tooltipBg,
+                callbacks: {
+                  label: ctx => {
+                    const pct = ((ctx.raw / 257673) * 100).toFixed(2);
+                    return `${ctx.label}: ${pct}%`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function renderAllCharts() {
+        renderSelectedModel();
+        renderOverallPerformanceChart();
+        renderErrorRatesChart();
+        renderEfficiencyChart();
+        renderDatasetChart();
+      }
+
+      // =========================================================================
+      // 6. INTERACTIVE EXPERIMENTAL DATA EDITOR
+      // =========================================================================
+      const editorModal = document.getElementById('editorModal');
+
+      function openEditor() {
+        const tbody = document.getElementById('editorTableBody');
+        tbody.innerHTML = modelsData.map((m, idx) => `
+          <tr>
+            <td class="p-2.5 font-semibold whitespace-nowrap">${m.code}: ${m.shortName}</td>
+            <td class="p-1.5"><input type="number" step="0.1" min="0" max="100" data-idx="${idx}" data-field="accuracy" value="${m.metrics.accuracy}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.1" min="0" max="100" data-idx="${idx}" data-field="precision" value="${m.metrics.precision}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.1" min="0" max="100" data-idx="${idx}" data-field="recall" value="${m.metrics.recall}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.1" min="0" max="100" data-idx="${idx}" data-field="f1" value="${m.metrics.f1}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.1" min="0" max="100" data-idx="${idx}" data-field="rocAuc" value="${m.metrics.rocAuc}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.1" min="0" max="100" data-idx="${idx}" data-field="fpr" value="${m.metrics.fpr}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.01" min="0" data-idx="${idx}" data-field="trainTime" value="${m.metrics.trainTime}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+            <td class="p-1.5"><input type="number" step="0.01" min="0" data-idx="${idx}" data-field="predTime" value="${m.metrics.predTime}" class="w-16 px-2 py-1 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs" /></td>
+          </tr>
+        `).join('');
+
+        editorModal.classList.remove('hidden');
+        editorModal.classList.add('flex');
+      }
+
+      function closeEditor() {
+        editorModal.classList.add('hidden');
+        editorModal.classList.remove('flex');
+      }
+
+      function updateBannerMode() {
+        const badge = document.getElementById('dataModeBadge');
+        const desc = document.getElementById('dataModeDesc');
+        const banner = document.getElementById('integrityBanner');
+
+        if (isCustomData) {
+          banner.className = 'rounded-2xl border-2 border-emerald-400/60 bg-emerald-50 dark:bg-emerald-950/30 p-5 sm:p-6';
+          badge.textContent = 'Custom User-Entered Experimental Results Active';
+          badge.className = 'text-xs font-mono px-2.5 py-0.5 rounded-full bg-emerald-200 dark:bg-emerald-800/80 text-emerald-900 dark:text-emerald-100 font-semibold';
+          desc.innerHTML = 'You are currently viewing <strong>custom experimental results</strong> entered via the interactive editor. All charts, radar profiles, and UNSW-NB15 confusion matrices reflect your values. Click <strong>"Edit Experimental Data"</strong> to modify or reset to illustrative defaults.';
+        } else {
+          banner.className = 'rounded-2xl border-2 border-amber-400/60 bg-amber-50 dark:bg-amber-950/30 p-5 sm:p-6';
+          badge.textContent = 'Illustrative UNSW-NB15 Simulation Profiles';
+          badge.className = 'text-xs font-mono px-2.5 py-0.5 rounded-full bg-amber-200 dark:bg-amber-800/80 text-amber-900 dark:text-amber-100 font-semibold';
+          desc.innerHTML = 'Per the manuscript\'s <strong>Data-Integrity Status</strong>, verified Scikit-learn execution logs have not yet been finalized in this version of the paper. Therefore, while the <strong>UNSW-NB15 dataset partition numbers (175,341 training, 82,332 testing, 257,673 total, 9 attack categories) are actual official figures</strong>, the model performance charts below display realistic <strong>Illustrative UNSW-NB15 Simulation Profiles</strong>. Use the <strong>"Edit Experimental Data"</strong> button above to enter your verified Scikit-learn results and update every chart, ranking, and confusion matrix live.';
+        }
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.classList.remove('hidden');
+        toast.classList.add('flex');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+          toast.classList.remove('flex');
+        }, 3000);
+      }
+
+      // =========================================================================
+      // 7. EVENT LISTENERS & INITIALIZATION
+      // =========================================================================
+      function initEvents() {
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const themeLabel = document.getElementById('themeLabel');
+
+        function applyTheme(dark) {
+          document.documentElement.classList.toggle('dark', dark);
+          sunIcon.classList.toggle('hidden', !dark);
+          moonIcon.classList.toggle('hidden', dark);
+          themeLabel.textContent = dark ? 'Light' : 'Dark';
+          renderAllCharts();
+        }
+
+        themeToggle.addEventListener('click', () => {
+          const nextDark = !document.documentElement.classList.contains('dark');
+          applyTheme(nextDark);
+        });
+
+        // Mobile Navigation Toggle
+        const mobileBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+          link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        });
+
+        // Metric Filter
+        document.getElementById('metricFilter').addEventListener('change', renderOverallPerformanceChart);
+
+        // RQ / Hypotheses Tabs
+        document.querySelectorAll('.rq-tab-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const target = btn.dataset.rqTab;
+            document.querySelectorAll('.rq-tab-btn').forEach(b => {
+              b.className = 'rq-tab-btn px-3.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-300';
+            });
+            btn.className = 'rq-tab-btn px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-300 shadow-sm';
+            document.getElementById('rqPanel').classList.toggle('hidden', target !== 'rq');
+            document.getElementById('hypPanel').classList.toggle('hidden', target !== 'hyp');
+          });
+        });
+
+        // Threats to Validity Search
+        document.getElementById('validitySearch').addEventListener('input', e => {
+          renderValidityTable(e.target.value);
+        });
+
+        // Editor Modal Controls
+        document.getElementById('openEditorBtn').addEventListener('click', openEditor);
+        document.getElementById('closeEditorBtn').addEventListener('click', closeEditor);
+        document.getElementById('cancelEditorBtn').addEventListener('click', closeEditor);
+
+        document.getElementById('saveDataBtn').addEventListener('click', () => {
+          const inputs = document.querySelectorAll('#editorTableBody input');
+          inputs.forEach(inp => {
+            const idx = Number(inp.dataset.idx);
+            const field = inp.dataset.field;
+            let val = parseFloat(inp.value);
+            if (isNaN(val)) val = 0;
+            if (field !== 'trainTime' && field !== 'predTime') {
+              val = Math.min(100, Math.max(0, val));
+            } else {
+              val = Math.max(0, val);
+            }
+            modelsData[idx].metrics[field] = +val.toFixed(2);
+          });
+          isCustomData = true;
+          updateBannerMode();
+          renderAllCharts();
+          closeEditor();
+          showToast('All charts & confusion matrices updated with custom data');
+        });
+
+        document.getElementById('resetDataBtn').addEventListener('click', () => {
+          modelsData = JSON.parse(JSON.stringify(DEFAULT_MODELS));
+          isCustomData = false;
+          updateBannerMode();
+          renderAllCharts();
+          closeEditor();
+          showToast('Restored illustrative UNSW-NB15 simulation profiles');
+        });
+      }
+
+      // Boot on window load
+      window.addEventListener('DOMContentLoaded', () => {
+        try {
+          renderFramework();
+          renderMetricsTable();
+          renderAblation();
+          renderValidityTable();
+          renderReferences();
+          renderModelTabs();
+          renderAllCharts();
+          initEvents();
+        } catch (err) {
+          console.error('Initialization error:', err);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

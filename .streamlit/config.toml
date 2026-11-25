@@ -1,0 +1,1 @@
+[server]\nmaxUploadSize = 200\n\n[browser]\ngatherUsageStats = false\n
